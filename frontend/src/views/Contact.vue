@@ -1,15 +1,15 @@
 <template>
   <v-container class="contact" fluid>
     <section class="contact__hero">
-      <h1>Kontakti</h1>
-      <p>Raksti vai zvanī — mēs atbildēsim 24h laikā.</p>
+      <h1>Sazināties ar mums</h1>
+      <p>Ja tev ir jautājumi par ceļojumu plānošanu, raksti mums — atbildēsim 24h laikā.</p>
     </section>
 
     <section class="contact__content">
       <div class="contact__info">
         <div class="info__item"><b>Adrese:</b> Brīvības iela 10, Rīga</div>
         <div class="info__item"><b>Telefons:</b> +371 12345678</div>
-        <div class="info__item"><b>E-pasts:</b> info@frizetava.lv</div>
+        <div class="info__item"><b>E-pasts:</b> info@celojumi.lv</div>
       </div>
 
       <div class="contact__form">
@@ -20,7 +20,7 @@
             <v-textarea v-model="message" label="Ziņa" rows="4" />
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" @click="send">Sūtīt</v-btn>
+            <v-btn color="primary" @click="send">Nosūtīt</v-btn>
           </v-card-actions>
         </v-card>
       </div>
@@ -95,7 +95,6 @@ export default {
   border-radius: 20px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .contact__content {
     grid-template-columns: 1fr;

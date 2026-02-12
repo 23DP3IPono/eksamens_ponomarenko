@@ -2,8 +2,8 @@
   <v-container class="services" fluid>
     <section class="hero">
       <div class="hero__text">
-        <h1>Pakalpojumi</h1>
-        <p>Izvēlies pakalpojumu, kas atbilst tieši tev. Mēs strādājam ātri un kvalitatīvi.</p>
+        <h1>Ceļojumi</h1>
+        <p>Izvēlies ceļojumu un plāno savu nākamo piedzīvojumu ērti un vienkārši.</p>
       </div>
     </section>
 
@@ -13,11 +13,11 @@
         v-for="s in services"
         :key="s.id"
       >
-        <div class="card__icon">✂️</div>
+        <div class="card__icon">🌍</div>
         <div class="card__name">{{ s.name }}</div>
         <div class="card__desc">{{ s.description }}</div>
         <div class="card__price">€ {{ s.price }}</div>
-        <v-btn class="card__btn" @click="book(s.name)">Rezervēt</v-btn>
+        <v-btn class="card__btn" @click="book(s.name)">Skatīt detaļas</v-btn>
       </div>
     </section>
   </v-container>
@@ -48,7 +48,6 @@ export default {
   padding: 40px 20px;
 }
 
-/* HERO */
 .hero {
   background: linear-gradient(135deg, #111827, #0f172a);
   padding: 60px 20px;
@@ -67,7 +66,6 @@ export default {
   margin-top: 10px;
 }
 
-/* CARDS */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -115,7 +113,6 @@ export default {
   padding: 10px 20px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .cards {
     grid-template-columns: repeat(2, 1fr);

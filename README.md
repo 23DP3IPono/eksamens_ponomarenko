@@ -1,6 +1,6 @@
-# Frizētavas rezervācijas sistēma
+# Ceļojumu plānotāja sistēma
 
-Šis projekts ir frizētavas pakalpojumu rezervācijas sistēmas prototips.
+Šis projekts ir ceļojumu plānošanas sistēmas prototips.  
 Frontend izstrādāts ar Vue.js un Vuetify, backend - ar Laravel.
 
 ## Tehnoloģijas
@@ -11,8 +11,8 @@ Frontend izstrādāts ar Vue.js un Vuetify, backend - ar Laravel.
 - Git & GitHub
 
 ## Projekta struktūra
-- `frontend/` – Vue.js aplikācija (Home page)
-- `backend/` – Laravel API (services dati)
+- `frontend/` – Vue.js aplikācija (Home page, Ceļojumu saraksts)
+- `backend/` – Laravel API (ceļojumu dati)
 
 ## Kā palaist projektu
 1. Pārliecinies, ka ir instalēts PHP, Composer, Node.js un MySQL.
@@ -28,6 +28,8 @@ Frontend izstrādāts ar Vue.js un Vuetify, backend - ar Laravel.
    - `npm run dev`
 
 ## Funkcionalitāte (minimālā)
-- Home page ar pakalpojumu sarakstu no datubāzes
-- API, kas atgriež pakalpojumu datus
+- Home page ar ceļojumu sarakstu no datubāzes
+- API, kas atgriež ceļojumu datus
 - Datu apmaiņa starp frontend un backend
+- Ceļojumu rezervācijas un informācijas pārvaldība
+

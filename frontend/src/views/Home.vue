@@ -1,59 +1,57 @@
 <template>
   <v-container fluid class="home">
 
-    <!-- HERO -->
+
     <section class="hero">
       <div class="hero__overlay"></div>
 
       <div class="hero__content">
-        <h1 class="hero__title">Top frizētava pilsētā</h1>
+        <h1 class="hero__title">Plāno savu sapņu ceļojumu</h1>
         <p class="hero__subtitle">
-          Moderni griezumi, profesionāli meistari un ātra online rezervācija.
+           Izveido un pārvaldi savus ceļojumus vienuviet – galamērķi, budžets un aktivitātes.
         </p>
 
         <div class="hero__buttons">
           <v-btn class="btn btn--primary" @click="$router.push('/services')">
-            Pakalpojumi
+            Skatīt ceļojumus
           </v-btn>
           <v-btn class="btn btn--secondary" @click="$router.push('/contact')">
-            Kontakti
+            Sazināties
           </v-btn>
         </div>
       </div>
     </section>
 
-    <!-- WHY US -->
     <section class="section section--dark">
-      <h2 class="section__title">Kāpēc izvēlēties mūs</h2>
+      <h2 class="section__title">Kāpēc izvēlēties mūsu ceļojumu plānotāju</h2>
 
       <div class="features">
         <div class="feature">
-          ✂️
-          <h3>Profesionāli meistari</h3>
-          <p>Ilggadēja pieredze un modernākie stili.</p>
+          🌍
+          <h3>Dažādi galamērķi</h3>
+          <p>Izvēlies no populārākajiem un eksotiskākajiem galamērķiem.</p>
         </div>
 
         <div class="feature">
-          ⚡
-          <h3>Ātra rezervācija</h3>
-          <p>Rezervē savu laiku dažu sekunžu laikā.</p>
+          💰
+          <h3>Budžeta kontrole</h3>
+          <p>Plāno savus izdevumus un kontrolē kopējās izmaksas.</p>
         </div>
 
         <div class="feature">
-          💎
-          <h3>Kvalitāte</h3>
-          <p>Tikai pārbaudīti instrumenti un produkti.</p>
+          🗂
+          <h3>Ērta pārvaldība</h3>
+          <p>Visi tavi ceļojumi vienuviet – vienkārši un pārskatāmi.</p>
         </div>
       </div>
     </section>
 
-    <!-- SERVICES -->
     <section class="section section--soft">
-      <h2 class="section__title">Mūsu pakalpojumi</h2>
+      <h2 class="section__title">Pieejamie ceļojumi</h2>
 
       <div class="cards">
         <div class="card" v-for="s in services" :key="s.id">
-          <div class="card__icon">✂️</div>
+          <div class="card__icon">🌍</div>
           <div class="card__title">{{ s.name }}</div>
           <div class="card__desc">{{ s.description }}</div>
           <div class="card__price">€ {{ s.price }}</div>
@@ -62,49 +60,46 @@
             class="btn btn--primary btn--full"
             @click="reserve(s.name)"
           >
-            Rezervēt
+            Skatīt detaļas
           </v-btn>
         </div>
       </div>
     </section>
-
-    <!-- HOW IT WORKS -->
     <section class="section section--light">
-      <h2 class="section__title">Kā tas notiek</h2>
+      <h2 class="section__title">Kā tas darbojas</h2>
 
       <div class="steps">
         <div class="step">
           <div class="step__num">1</div>
-          <div class="step__text">Izvēlies pakalpojumu</div>
+          <div class="step__text">Izvēlies ceļojumu</div>
         </div>
 
         <div class="step">
           <div class="step__num">2</div>
-          <div class="step__text">Rezervē laiku</div>
+          <div class="step__text">Pārskati informāciju un budžetu</div>
         </div>
 
         <div class="step">
           <div class="step__num">3</div>
-          <div class="step__text">Nāc un izbaudi</div>
+          <div class="step__text">Saglabā un plāno savu piedzīvojumu</div>
         </div>
       </div>
     </section>
 
-    <!-- CTA -->
     <section class="section cta">
-      <h2>Gatavs jaunam izskatam?</h2>
+      <h2>Gatavs jaunam piedzīvojumam?</h2>
       <v-btn class="btn btn--primary btn--big" @click="$router.push('/services')">
-        Rezervēt tagad
+        Sākt plānot
       </v-btn>
     </section>
 
-    <!-- FOOTER -->
     <footer class="footer">
-      © 2026 Frizētava. Visas tiesības aizsargātas.
+      © 2026 Ceļojumu plānotājs. Visas tiesības aizsargātas.
     </footer>
 
   </v-container>
 </template>
+
 
 <script>
 export default {
@@ -139,8 +134,9 @@ export default {
 .hero {
   position: relative;
   min-height: 85vh;
-  background: url("https://cdn.prod.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp")
+  background: url("https://wallpapers.com/images/hd/plane-desktop-c5zffr0rhiqxhibo.jpg")
     center / cover no-repeat;
+    background-position-y: 10%;
   display: flex;
   align-items: center;
   padding: 80px 60px;
