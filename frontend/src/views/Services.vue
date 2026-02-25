@@ -79,11 +79,13 @@ export default {
   border-radius: 20px;
   padding: 25px;
   text-align: center;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+  cursor: pointer;
 }
 
 .card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
   background: rgba(255,255,255,0.08);
 }
 

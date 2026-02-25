@@ -102,6 +102,7 @@
 
 
 <script>
+
 export default {
   data() {
     return {
@@ -130,7 +131,6 @@ export default {
   font-family: Arial, sans-serif;
 }
 
-/* HERO */
 .hero {
   position: relative;
   min-height: 85vh;
@@ -173,9 +173,9 @@ export default {
 .hero__buttons {
   display: flex;
   gap: 15px;
+  cursor: pointer;
 }
 
-/* BUTTONS */
 .btn {
   border-radius: 100px;
   font-weight: 700;
@@ -213,7 +213,6 @@ export default {
   padding: 14px 36px;
 }
 
-/* SECTIONS */
 .section {
   padding: 80px 60px;
 }
@@ -240,7 +239,6 @@ export default {
   margin-bottom: 45px;
 }
 
-/* FEATURES */
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -254,7 +252,6 @@ export default {
   border-radius: 22px;
 }
 
-/* CARDS */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -265,12 +262,14 @@ export default {
   padding: 50px;
   background: rgba(255,255,255,0.06);
   border-radius: 24px;
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+  cursor: pointer;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  background: rgba(255,255,255,0.12);
 }
 
 .card__title {
@@ -286,7 +285,6 @@ export default {
   margin-bottom: 18px;
 }
 
-/* STEPS */
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -306,14 +304,12 @@ export default {
   color: #f59e0b;
 }
 
-/* CTA */
 .cta {
   text-align: center;
   background: linear-gradient(135deg, #d1c3d1, #7a716b);
   color: #111;
 }
 
-/* FOOTER */
 .footer {
   padding: 30px;
   text-align: center;
@@ -321,7 +317,6 @@ export default {
   color: #aaa;
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .cards,
   .features,
