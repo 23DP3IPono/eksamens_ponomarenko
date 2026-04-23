@@ -1,6 +1,6 @@
+<!-- Home.vue -->
 <template>
   <v-container fluid class="home">
-
 
     <section class="hero">
       <div class="hero__overlay"></div>
@@ -8,7 +8,7 @@
       <div class="hero__content">
         <h1 class="hero__title">Plāno savu sapņu ceļojumu</h1>
         <p class="hero__subtitle">
-           Izveido un pārvaldi savus ceļojumus vienuviet – galamērķi, budžets un aktivitātes.
+          Izveido un pārvaldi savus ceļojumus vienuviet – galamērķi, budžets un aktivitātes.
         </p>
 
         <div class="hero__buttons">
@@ -47,24 +47,31 @@
     </section>
 
     <section class="section section--soft">
-      <h2 class="section__title">Pieejamie ceļojumi</h2>
+      <h2 class="section__title">Populārākie ceļojumi</h2>
 
-      <div class="cards">
-        <div class="card" v-for="s in services" :key="s.id">
+      <div v-if="loading" class="loading">Ielādē...</div>
+      <div v-else-if="error" class="error">Kļūda: {{ error }}</div>
+
+      <div v-else class="cards">
+        <div class="card" v-for="t in trips" :key="t.celojuma_id">
           <div class="card__icon">🌍</div>
-          <div class="card__title">{{ s.name }}</div>
-          <div class="card__desc">{{ s.description }}</div>
-          <div class="card__price">€ {{ s.price }}</div>
+          <div class="card__title">{{ t.nosaukums }}</div>
+          <div class="card__desc">{{ t.galamerkis }}</div>
+          <div class="card__dates">
+            {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+          </div>
+          <div class="card__price">€ {{ t.budzets }}</div>
 
           <v-btn
             class="btn btn--primary btn--full"
-            @click="reserve(s.name)"
+            @click="$router.push('/services/' + t.celojuma_id)"
           >
             Skatīt detaļas
           </v-btn>
         </div>
       </div>
     </section>
+
     <section class="section section--light">
       <h2 class="section__title">Kā tas darbojas</h2>
 
@@ -100,27 +107,34 @@
   </v-container>
 </template>
 
-
 <script>
+import api from "@/api";
 
 export default {
   data() {
     return {
-      services: [],
+      trips: [],
+      loading: true,
+      error: null,
     };
   },
 
-  mounted() {
-    fetch("http://127.0.0.1:8000/api/services")
-      .then(res => res.json())
-      .then(data => {
-        this.services = data;
-      });
+  async mounted() {
+    try {
+      // Only fetch the first 3 trips, sorted by latest start date
+      const data = await api.getTrips({ sort_by: "sakuma_datums", sort_dir: "desc" });
+      this.trips = data.slice(0, 3);
+    } catch (err) {
+      this.error = err.message;
+    } finally {
+      this.loading = false;
+    }
   },
 
   methods: {
-    reserve(serviceName) {
-      alert("Rezervācija: " + serviceName);
+    formatDate(d) {
+      if (!d) return "";
+      return new Date(d).toLocaleDateString("lv-LV");
     },
   },
 };
@@ -136,7 +150,7 @@ export default {
   min-height: 85vh;
   background: url("https://wallpapers.com/images/hd/plane-desktop-c5zffr0rhiqxhibo.jpg")
     center / cover no-repeat;
-    background-position-y: 10%;
+  background-position-y: 10%;
   display: flex;
   align-items: center;
   padding: 80px 60px;
@@ -195,12 +209,12 @@ export default {
 }
 
 .btn--secondary {
-  border: 2px solid rgba(255,255,255,0.6);
+  border: 2px solid rgba(255, 255, 255, 0.6);
   color: white;
 }
 
 .btn--secondary:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .btn--full {
@@ -239,6 +253,14 @@ export default {
   margin-bottom: 45px;
 }
 
+.loading, .error {
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  padding: 40px;
+}
+.error { color: #ff6b6b; }
+
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -248,7 +270,7 @@ export default {
 
 .feature {
   padding: 35px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 22px;
 }
 
@@ -260,16 +282,17 @@ export default {
 
 .card {
   padding: 50px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
   cursor: pointer;
+  text-align: center;
 }
 
 .card:hover {
   transform: translateY(-12px) scale(1.03);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-  background: rgba(255,255,255,0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .card__title {
@@ -278,11 +301,23 @@ export default {
   margin: 10px 0;
 }
 
+.card__desc {
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.card__dates {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
 .card__price {
   font-size: 18px;
   font-weight: 700;
   margin-top: 10px;
   margin-bottom: 18px;
+  color: #f59e0b;
 }
 
 .steps {

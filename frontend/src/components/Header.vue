@@ -1,3 +1,4 @@
+<!-- Header.vue -->
 <template>
   <header class="header">
     <div class="logo" @click="$router.push('/')">
@@ -8,12 +9,45 @@
       <router-link to="/">Sākums</router-link>
       <router-link to="/services">Ceļojumi</router-link>
       <router-link to="/contact">Kontakti</router-link>
+      <router-link to="/stats">Statistika</router-link>
+
+      <template v-if="!auth.isLoggedIn">
+        <router-link to="/login">Pieslēgties</router-link>
+        <router-link to="/register" class="register-link">Reģistrēties</router-link>
+      </template>
+
+      <template v-else>
+        <router-link to="/my-trips">Mani ceļojumi</router-link>
+        <router-link to="/services/new" class="register-link">+ Jauns</router-link>
+        <span class="user">👤 {{ auth.fullName }}</span>
+        <a href="#" @click.prevent="logout">Iziet</a>
+      </template>
     </nav>
   </header>
 </template>
 
 <script>
-export default {};
+import { useAuthStore } from "@/stores/auth";
+import api from "@/api";
+
+export default {
+  computed: {
+    auth() {
+      return useAuthStore();
+    },
+  },
+  methods: {
+    async logout() {
+      try {
+        await api.logout();
+      } catch (_) {
+        // Ignore errors — we clear local state anyway
+      }
+      this.auth.clearAuth();
+      this.$router.push("/");
+    },
+  },
+};
 </script>
 
 <style>
@@ -21,11 +55,11 @@ export default {};
   position: sticky;
   top: 0;
   z-index: 1000;
-  
+
   backdrop-filter: blur(12px);
   background: rgba(15, 23, 42, 0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
   display: flex;
   justify-content: space-between;
@@ -36,7 +70,7 @@ export default {};
 
 .header:hover {
   background: rgba(15, 23, 42, 0.95);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .logo {
@@ -55,11 +89,12 @@ export default {};
 
 .nav {
   display: flex;
-  gap: 35px;
+  gap: 25px;
+  align-items: center;
 }
 
 .nav a {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-weight: 600;
   position: relative;
@@ -90,5 +125,21 @@ export default {};
 .nav a:hover::after,
 .nav a.router-link-active::after {
   width: 100%;
+}
+
+.nav .register-link {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #111 !important;
+  padding: 8px 16px !important;
+  border-radius: 999px;
+}
+
+.nav .register-link::after {
+  display: none;
+}
+
+.nav .user {
+  color: #f59e0b;
+  font-weight: 700;
 }
 </style>
