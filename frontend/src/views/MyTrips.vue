@@ -11,45 +11,85 @@
       </v-btn>
     </section>
 
-    <div v-if="loading" class="state">Ielādē...</div>
-    <div v-else-if="error" class="state error">Kļūda: {{ error }}</div>
-    <div v-else-if="trips.length === 0" class="state">
-      Tev vēl nav neviena ceļojuma. Noklikšķini "+ Jauns ceļojums", lai sāktu!
+    <Loader v-if="loading" text="Ielādē tavus ceļojumus..." />
+    <div v-else-if="error" class="state error">
+      ⚠️ Neizdevās ielādēt tavus ceļojumus.
     </div>
 
-    <section v-else class="cards">
-      <div
-        class="card"
-        v-for="t in trips"
-        :key="t.celojuma_id"
-      >
-        <div class="card__main" @click="$router.push('/services/' + t.celojuma_id)">
-          <div class="card__icon">🌍</div>
-          <div class="card__name">{{ t.nosaukums }}</div>
-          <div class="card__desc">{{ t.galamerkis }}</div>
-          <div class="card__dates">
-            {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+    <template v-else>
+      <!-- Favorites section -->
+      <section v-if="favorites.length > 0" class="fav-section">
+        <h2 class="section-title">⭐ Iecienītie ceļojumi</h2>
+        <div class="cards">
+          <div
+            class="card"
+            v-for="t in favorites"
+            :key="'fav-' + t.celojuma_id"
+          >
+            <FavoriteButton
+              :trip-id="t.celojuma_id"
+              :initial="true"
+              class="card__fav"
+              @change="onFavoriteChange(t.celojuma_id, $event)"
+            />
+            <div class="card__main" @click="$router.push('/services/' + t.celojuma_id)">
+              <div class="card__icon">⭐</div>
+              <div class="card__name">{{ t.nosaukums }}</div>
+              <div class="card__desc">{{ t.galamerkis }}</div>
+              <div class="card__dates">
+                {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+              </div>
+              <div class="card__price">€ {{ t.budzets }}</div>
+            </div>
           </div>
-          <div class="card__price">€ {{ t.budzets }}</div>
         </div>
+      </section>
 
-        <div class="card__actions">
-          <v-btn
-            class="btn btn--edit"
-            @click.stop="$router.push('/services/' + t.celojuma_id + '/edit')"
-          >
-            ✏️ Rediģēt
-          </v-btn>
-          <v-btn
-            class="btn btn--delete"
-            :loading="deletingId === t.celojuma_id"
-            @click.stop="confirmDelete(t)"
-          >
-            🗑 Dzēst
-          </v-btn>
+      <h2 v-if="trips.length > 0" class="section-title">📌 Mani izveidotie</h2>
+
+      <EmptyState
+        v-if="trips.length === 0 && favorites.length === 0"
+        icon="✈️"
+        title="Vēl nav neviena ceļojuma"
+        subtitle="Sāc ceļojumu plānošanu, izveidojot savu pirmo braucienu!"
+        actionText="+ Jauns ceļojums"
+        @action="$router.push('/services/new')"
+      />
+
+      <section v-else-if="trips.length > 0" class="cards">
+        <div
+          class="card"
+          v-for="t in trips"
+          :key="t.celojuma_id"
+        >
+          <div class="card__main" @click="$router.push('/services/' + t.celojuma_id)">
+            <div class="card__icon">🌍</div>
+            <div class="card__name">{{ t.nosaukums }}</div>
+            <div class="card__desc">{{ t.galamerkis }}</div>
+            <div class="card__dates">
+              {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+            </div>
+            <div class="card__price">€ {{ t.budzets }}</div>
+          </div>
+
+          <div class="card__actions">
+            <v-btn
+              class="btn btn--edit"
+              @click.stop="$router.push('/services/' + t.celojuma_id + '/edit')"
+            >
+              ✏️ Rediģēt
+            </v-btn>
+            <v-btn
+              class="btn btn--delete"
+              :loading="deletingId === t.celojuma_id"
+              @click.stop="confirmDelete(t)"
+            >
+              🗑 Dzēst
+            </v-btn>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </template>
 
     <!-- Delete confirmation dialog -->
     <v-dialog v-model="confirmDialog" max-width="420">
@@ -71,12 +111,17 @@
 
 <script>
 import api from "@/api";
+import Loader from "@/components/Loader.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import FavoriteButton from "@/components/FavoriteButton.vue";
 import { useAuthStore } from "@/stores/auth";
 
 export default {
+  components: { Loader, EmptyState, FavoriteButton },
   data() {
     return {
       trips: [],
+      favorites: [],
       loading: true,
       error: null,
       deletingId: null,
@@ -91,18 +136,27 @@ export default {
       return;
     }
 
-    await this.load();
+    await Promise.all([this.load(), this.loadFavorites()]);
+    this.loading = false;
   },
   methods: {
     async load() {
-      this.loading = true;
-      this.error = null;
       try {
         this.trips = await api.getMyTrips({ sort_by: "sakuma_datums", sort_dir: "desc" });
       } catch (err) {
         this.error = err.message;
-      } finally {
-        this.loading = false;
+      }
+    },
+    async loadFavorites() {
+      try {
+        this.favorites = await api.getFavorites();
+      } catch (err) {
+        console.error("Favorites load failed:", err);
+      }
+    },
+    onFavoriteChange(tripId, isFav) {
+      if (!isFav) {
+        this.favorites = this.favorites.filter(t => t.celojuma_id !== tripId);
       }
     },
     confirmDelete(trip) {
@@ -116,6 +170,8 @@ export default {
       try {
         await api.deleteTrip(this.toDelete.celojuma_id);
         this.trips = this.trips.filter(t => t.celojuma_id !== this.toDelete.celojuma_id);
+        // Also remove from favorites if it was there
+        this.favorites = this.favorites.filter(t => t.celojuma_id !== this.toDelete.celojuma_id);
       } catch (err) {
         alert("Kļūda dzēšot: " + err.message);
       } finally {
@@ -169,12 +225,23 @@ export default {
 .state.error {
   color: #ff6b6b;
 }
+.fav-section {
+  margin-bottom: 30px;
+}
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: white;
+}
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  margin-bottom: 30px;
 }
 .card {
+  position: relative;
   background: #0b0f1a;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
@@ -182,6 +249,12 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.card__fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
 }
 .card__main {
   cursor: pointer;

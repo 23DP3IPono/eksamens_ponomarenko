@@ -76,27 +76,38 @@
     </section>
 
     <!-- Results -->
-    <div v-if="loading" class="state">Ielādē...</div>
-    <div v-else-if="error" class="state error">Kļūda: {{ error }}</div>
-    <div v-else-if="trips.length === 0" class="state">Nav atrasts neviens ceļojums.</div>
+    <Loader v-if="loading" text="Meklē ceļojumus..." />
+    <div v-else-if="error" class="state error">
+      ⚠️ Neizdevās ielādēt datus. Pārbaudi savienojumu un mēģini vēlreiz.
+    </div>
+    <EmptyState
+      v-else-if="trips.length === 0"
+      icon="🔍"
+      title="Neviens ceļojums neatbilst meklēšanas kritērijiem"
+      subtitle="Pamēģini mainīt filtrus vai notīrīt meklēšanu."
+      actionText="Notīrīt filtrus"
+      @action="resetFilters"
+    />
 
     <section v-else class="cards">
       <div
         class="card"
         v-for="t in trips"
         :key="t.celojuma_id"
-        @click="$router.push('/services/' + t.celojuma_id)"
       >
-        <div class="card__icon">🌍</div>
-        <div class="card__name">{{ t.nosaukums }}</div>
-        <div class="card__desc">{{ t.galamerkis }}</div>
-        <div class="card__dates">
-          {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+        <FavoriteButton :trip-id="t.celojuma_id" class="card__fav" />
+        <div class="card__inner" @click="$router.push('/services/' + t.celojuma_id)">
+          <div class="card__icon">🌍</div>
+          <div class="card__name">{{ t.nosaukums }}</div>
+          <div class="card__desc">{{ t.galamerkis }}</div>
+          <div class="card__dates">
+            {{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}
+          </div>
+          <div class="card__user" v-if="t.lietotajs">
+            <small>👤 {{ t.lietotajs.name }} {{ t.lietotajs.uzvards }}</small>
+          </div>
+          <div class="card__price">€ {{ t.budzets }}</div>
         </div>
-        <div class="card__user" v-if="t.lietotajs">
-          <small>👤 {{ t.lietotajs.name }} {{ t.lietotajs.uzvards }}</small>
-        </div>
-        <div class="card__price">€ {{ t.budzets }}</div>
       </div>
     </section>
   </v-container>
@@ -104,22 +115,24 @@
 
 <script>
 import api from "@/api";
+import Loader from "@/components/Loader.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import FavoriteButton from "@/components/FavoriteButton.vue";
 
 export default {
+  components: { Loader, EmptyState, FavoriteButton },
   data() {
     return {
       trips: [],
       loading: false,
       error: null,
 
-      // Search + filters
       search: "",
       budgetMin: null,
       budgetMax: null,
       dateFrom: "",
       dateTo: "",
 
-      // Sort
       sortBy: "celojuma_id",
       sortDir: "asc",
       sortOptions: [
@@ -162,7 +175,6 @@ export default {
     },
 
     debouncedLoad() {
-      // Debounce so we don't fire a request on every keystroke
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => this.loadTrips(), 300);
     },
@@ -251,13 +263,13 @@ export default {
 }
 
 .card {
+  position: relative;
   background: #0b0f1a;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 25px;
   text-align: center;
   transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
-  cursor: pointer;
   color: white;
 }
 
@@ -265,6 +277,17 @@ export default {
   transform: translateY(-12px) scale(1.03);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   background: rgba(255, 255, 255, 0.08);
+}
+
+.card__fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.card__inner {
+  cursor: pointer;
 }
 
 .card__icon {

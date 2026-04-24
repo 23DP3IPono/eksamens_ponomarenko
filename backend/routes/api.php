@@ -8,11 +8,14 @@ use App\Http\Controllers\IzdevumsController;
 use App\Http\Controllers\RezervacijaController;
 use App\Http\Controllers\VietaController;
 use App\Http\Controllers\DienasPunktsController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\FavoriteController;
 
 Route::get('/services', [ServiceController::class, 'index']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/messages', [MessageController::class, 'store']);
 
 Route::get('/celojumi/stats', [CelojumsController::class, 'stats']);
 Route::get('/celojumi', [CelojumsController::class, 'index']);
@@ -45,4 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/dienas-punkti/{id}', [DienasPunktsController::class, 'update']);
     Route::patch('/dienas-punkti/{id}', [DienasPunktsController::class, 'update']);
     Route::delete('/dienas-punkti/{id}', [DienasPunktsController::class, 'destroy']);
+
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::get('/favorites/check/{celojuma_id}', [FavoriteController::class, 'check']);
+    Route::post('/favorites/{celojuma_id}', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{celojuma_id}', [FavoriteController::class, 'destroy']);
 });

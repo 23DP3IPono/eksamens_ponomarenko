@@ -1,8 +1,10 @@
 <!-- TripDetail.vue -->
 <template>
   <v-container class="detail" fluid>
-    <div v-if="loading" class="state">Ielādē...</div>
-    <div v-else-if="error" class="state error">Kļūda: {{ error }}</div>
+    <Loader v-if="loading" text="Ielādē ceļojuma informāciju..." />
+    <div v-else-if="error" class="state error">
+      ⚠️ Ceļojums nav atrasts vai arī radās kļūda.
+    </div>
 
     <div v-else-if="trip">
       <!-- Back button -->
@@ -12,7 +14,10 @@
 
       <!-- Hero -->
       <section class="hero">
-        <h1>{{ trip.nosaukums }}</h1>
+        <div class="hero__top">
+          <h1>{{ trip.nosaukums }}</h1>
+          <FavoriteButton :trip-id="trip.celojuma_id" />
+        </div>
         <p class="hero__dest">📍 {{ trip.galamerkis }}</p>
         <p class="hero__dates">
           🗓 {{ formatDate(trip.sakuma_datums) }} – {{ formatDate(trip.beigu_datums) }}
@@ -23,7 +28,29 @@
         <div class="hero__budget">Budžets: € {{ trip.budzets }}</div>
       </section>
 
-      <!-- Summary stats (aggregation example) -->
+      <!-- Owner actions -->
+      <section v-if="isOwner" class="owner-actions">
+        <v-btn class="btn btn--edit" @click="$router.push('/services/' + trip.celojuma_id + '/edit')">
+          ✏️ Rediģēt
+        </v-btn>
+        <v-btn class="btn btn--delete" :loading="deleting" @click="confirmDialog = true">
+          🗑 Dzēst
+        </v-btn>
+      </section>
+
+      <!-- Delete confirmation -->
+      <v-dialog v-model="confirmDialog" max-width="420">
+        <div class="dialog">
+          <h3>Apstiprināt dzēšanu</h3>
+          <p>Vai tiešām vēlies dzēst šo ceļojumu? Šī darbība ir neatgriezeniska.</p>
+          <div class="dialog__actions">
+            <v-btn class="btn" @click="confirmDialog = false">Atcelt</v-btn>
+            <v-btn class="btn btn--delete" @click="doDelete">Dzēst</v-btn>
+          </div>
+        </div>
+      </v-dialog>
+
+      <!-- Summary stats -->
       <section class="summary">
         <div class="summary__card">
           <div class="summary__num">{{ trip.dienas_punkti?.length || 0 }}</div>
@@ -45,27 +72,28 @@
           <div class="summary__num">€ {{ remaining }}</div>
           <div class="summary__label">Budžeta atlikums</div>
         </div>
-        <!-- Owner actions -->
-      <section v-if="isOwner" class="owner-actions">
-        <v-btn class="btn btn--edit" @click="$router.push('/services/' + trip.celojuma_id + '/edit')">
-          ✏️ Rediģēt
-        </v-btn>
-        <v-btn class="btn btn--delete" :loading="deleting" @click="confirmDialog = true">
-          🗑 Dzēst
-        </v-btn>
       </section>
 
-      <!-- Delete confirmation -->
-      <v-dialog v-model="confirmDialog" max-width="420">
-        <div class="dialog">
-          <h3>Apstiprināt dzēšanu</h3>
-          <p>Vai tiešām vēlies dzēst šo ceļojumu? Šī darbība ir neatgriezeniska.</p>
-          <div class="dialog__actions">
-            <v-btn class="btn" @click="confirmDialog = false">Atcelt</v-btn>
-            <v-btn class="btn btn--delete" @click="doDelete">Dzēst</v-btn>
-          </div>
+      <!-- Budget progress bar -->
+      <section class="budget-bar">
+        <div class="budget-bar__header">
+          <span>Budžeta izlietojums</span>
+          <span class="budget-bar__percent" :class="budgetClass">
+            {{ budgetPercent }}%
+          </span>
         </div>
-      </v-dialog>
+        <div class="budget-bar__track">
+          <div
+            class="budget-bar__fill"
+            :class="budgetClass"
+            :style="{ width: Math.min(budgetPercent, 100) + '%' }"
+          ></div>
+        </div>
+        <div class="budget-bar__info">
+          Iztērēts: € {{ totalSpent }} / € {{ trip.budzets }}
+          <span v-if="remaining >= 0">(atlikums: € {{ remaining }})</span>
+          <span v-else class="over">(pārsniegts par € {{ Math.abs(remaining).toFixed(2) }})</span>
+        </div>
       </section>
 
       <!-- Day points -->
@@ -101,7 +129,6 @@
         <div class="dialog">
           <h3>{{ editingDayPoint ? "Rediģēt punktu" : "Jauns punkts" }}</h3>
 
-          <!-- Place picker: choose existing or create new -->
           <div class="tabs">
             <v-btn
               :class="['tab', { active: placeMode === 'existing' }]"
@@ -119,7 +146,6 @@
             </v-btn>
           </div>
 
-          <!-- Existing place -->
           <div v-if="placeMode === 'existing'">
             <v-autocomplete
               v-model="dayPointForm.vieta_id"
@@ -133,7 +159,6 @@
             />
           </div>
 
-          <!-- New place form -->
           <div v-else class="new-place">
             <v-text-field
               v-model="newPlaceForm.nosaukums"
@@ -339,9 +364,12 @@
 
 <script>
 import api from "@/api";
+import Loader from "@/components/Loader.vue";
+import FavoriteButton from "@/components/FavoriteButton.vue";
 import { useAuthStore } from "@/stores/auth";
 
 export default {
+  components: { Loader, FavoriteButton },
   data() {
     return {
       trip: null,
@@ -403,9 +431,21 @@ export default {
         .reduce((sum, e) => sum + Number(e.summa || 0), 0)
         .toFixed(2);
     },
+    totalSpent() {
+      return (Number(this.totalReservations) + Number(this.totalExpenses)).toFixed(2);
+    },
     remaining() {
-      const spent = Number(this.totalReservations) + Number(this.totalExpenses);
-      return (Number(this.trip?.budzets || 0) - spent).toFixed(2);
+      return (Number(this.trip?.budzets || 0) - Number(this.totalSpent)).toFixed(2);
+    },
+    budgetPercent() {
+      if (!this.trip?.budzets || this.trip.budzets == 0) return 0;
+      return Math.round((this.totalSpent / this.trip.budzets) * 100);
+    },
+    budgetClass() {
+      const p = this.budgetPercent;
+      if (p >= 100) return "over";
+      if (p >= 80) return "warn";
+      return "ok";
     },
   },
 
@@ -494,7 +534,6 @@ export default {
           });
         }
         this.expenseDialog = false;
-        // Reload trip to get fresh list
         await this.loadTrip();
       } catch (err) {
         if (err.status === 422 && err.data?.errors) {
@@ -598,7 +637,6 @@ export default {
       this.newPlaceErrors = {};
       this.placeMode = "existing";
 
-      // Load places list
       this.placesLoading = true;
       try {
         this.places = await api.getPlaces();
@@ -656,7 +694,6 @@ export default {
       try {
         let vietaId = this.dayPointForm.vieta_id;
 
-        // Create new place first if needed
         if (this.placeMode === "new") {
           const newPlace = await api.createPlace(this.newPlaceForm);
           vietaId = newPlace.vieta_id;
@@ -737,6 +774,18 @@ export default {
   margin-bottom: 25px;
 }
 
+.hero__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.hero__top h1 {
+  margin-bottom: 0 !important;
+}
+
 .hero h1 {
   font-size: 40px;
   font-weight: 900;
@@ -757,11 +806,34 @@ export default {
   color: #f59e0b;
 }
 
+.owner-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.btn {
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 12px 24px;
+}
+.btn--edit {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+.btn--delete {
+  background: #ef4444;
+  color: white;
+}
+.btn--primary {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #111;
+}
+
 .summary {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .summary__card {
@@ -784,6 +856,53 @@ export default {
   font-size: 13px;
 }
 
+.budget-bar {
+  background: #0b0f1a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 22px 25px;
+  margin-bottom: 20px;
+}
+.budget-bar__header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+.budget-bar__percent.ok { color: #22c55e; }
+.budget-bar__percent.warn { color: #f59e0b; }
+.budget-bar__percent.over { color: #ef4444; }
+.budget-bar__track {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.budget-bar__fill {
+  height: 100%;
+  transition: width 0.6s ease;
+  border-radius: 999px;
+}
+.budget-bar__fill.ok {
+  background: linear-gradient(90deg, #22c55e, #10b981);
+}
+.budget-bar__fill.warn {
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+.budget-bar__fill.over {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+.budget-bar__info {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-top: 8px;
+}
+.budget-bar__info .over {
+  color: #fca5a5;
+  margin-left: 4px;
+}
+
 .block {
   background: #0b0f1a;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -791,121 +910,6 @@ export default {
   padding: 25px;
   margin-bottom: 20px;
 }
-
-.block h2 {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 15px;
-}
-
-.empty {
-  opacity: 0.6;
-  font-style: italic;
-}
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.item {
-  display: flex;
-  gap: 20px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-}
-
-.item__date {
-  min-width: 110px;
-  font-weight: 700;
-  color: #f59e0b;
-}
-
-.item__title {
-  font-weight: 700;
-}
-
-.item__type {
-  opacity: 0.6;
-  font-weight: 400;
-  font-size: 13px;
-}
-
-.item__sub {
-  opacity: 0.7;
-  font-size: 13px;
-}
-
-.item__desc {
-  margin-top: 6px;
-  opacity: 0.85;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  text-align: left;
-  padding: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.table th {
-  opacity: 0.7;
-  font-weight: 600;
-}
-
-@media (max-width: 900px) {
-  .summary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.owner-actions {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-.btn {
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 12px 24px;
-}
-.btn--edit {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-}
-.btn--delete {
-  background: #ef4444;
-  color: white;
-}
-.dialog {
-  background: #0b0f1a;
-  color: white;
-  padding: 30px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-.dialog h3 {
-  font-size: 22px;
-  font-weight: 900;
-  margin-bottom: 10px;
-}
-.dialog p {
-  opacity: 0.85;
-  margin-bottom: 20px;
-}
-.dialog__actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
 
 .block__header {
   display: flex;
@@ -934,19 +938,65 @@ export default {
 .row-btn--del {
   background: rgba(239, 68, 68, 0.2);
 }
-.btn--primary {
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  color: #111;
+
+.block h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.empty {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .item {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
   position: relative;
 }
+
+.item__date {
+  min-width: 110px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.item__title {
+  font-weight: 700;
+}
+
+.item__type {
+  opacity: 0.6;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.item__sub {
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.item__desc {
+  margin-top: 6px;
+  opacity: 0.85;
+}
+
 .item__actions {
   display: flex;
   gap: 5px;
   align-items: flex-start;
 }
+
 .tabs {
   display: flex;
   gap: 10px;
@@ -969,4 +1019,56 @@ export default {
   margin-bottom: 10px;
 }
 
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.dialog {
+  background: #0b0f1a;
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.dialog h3 {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+.dialog p {
+  opacity: 0.85;
+  margin-bottom: 20px;
+}
+.dialog__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>

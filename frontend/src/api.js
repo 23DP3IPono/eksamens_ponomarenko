@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/stores/auth";
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000/api";
 
 async function request(path, options = {}) {
   const auth = useAuthStore();
@@ -58,6 +58,10 @@ export const api = {
   deleteTrip: (id) => request(`/celojumi/${id}`, { method: "DELETE" }),
   getTripStats: () => request(`/celojumi/stats`),
 
+  // === Contact messages ===
+  sendMessage: (data) =>
+    request(`/messages`, { method: "POST", body: JSON.stringify(data) }),
+
   // === Expenses ===
   createExpense: (data) =>
     request(`/izdevumi`, { method: "POST", body: JSON.stringify(data) }),
@@ -86,6 +90,14 @@ export const api = {
   updateDayPoint: (id, data) =>
     request(`/dienas-punkti/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteDayPoint: (id) => request(`/dienas-punkti/${id}`, { method: "DELETE" }),
+
+  // === Favorites ===
+  getFavorites: () => request(`/favorites`),
+  checkFavorite: (tripId) => request(`/favorites/check/${tripId}`),
+  addFavorite: (tripId) =>
+    request(`/favorites/${tripId}`, { method: "POST" }),
+  removeFavorite: (tripId) =>
+    request(`/favorites/${tripId}`, { method: "DELETE" }),
 
 };
 

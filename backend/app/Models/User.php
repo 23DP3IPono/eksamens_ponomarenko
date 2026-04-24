@@ -34,4 +34,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Celojums::class, 'lietotajs_id');
     }
+
+    // Favorited trips
+public function favoriteCelojumi()
+{
+    return $this->belongsToMany(
+        Celojums::class,
+        'favorites',
+        'user_id',
+        'celojuma_id',
+        'id',
+        'celojuma_id'
+    )->withTimestamps();
+}
+
 }

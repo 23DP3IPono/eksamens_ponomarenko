@@ -5,9 +5,9 @@ import Contact from "../views/Contact.vue";
 import TripDetail from "../views/TripDetail.vue";
 import TripForm from "../views/TripForm.vue";
 import MyTrips from "../views/MyTrips.vue";
+import Stats from "../views/Stats.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
-import Stats from "../views/Stats.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -16,15 +16,23 @@ const routes = [
   { path: "/services/:id", component: TripDetail },
   { path: "/services/:id/edit", component: TripForm },
   { path: "/my-trips", component: MyTrips },
+  { path: "/stats", component: Stats },
   { path: "/contact", component: Contact },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
-  { path: "/stats", component: Stats },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // If the user used browser back/forward, restore where they were
+    if (savedPosition) {
+      return savedPosition;
+    }
+    // Otherwise, scroll to top
+    return { top: 0 };
+  },
 });
 
 export default router;

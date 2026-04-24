@@ -6,8 +6,8 @@
       <p>Kopējs skatījums uz visiem ceļojumiem sistēmā.</p>
     </section>
 
-    <div v-if="loading" class="state">Ielādē...</div>
-    <div v-else-if="error" class="state error">Kļūda: {{ error }}</div>
+    <Loader v-if="loading" text="Aprēķina statistiku..." />
+    <div v-else-if="error" class="state error">⚠️ Neizdevās ielādēt statistiku.</div>
 
     <template v-else-if="data">
       <!-- Summary cards -->
@@ -98,6 +98,7 @@
 <script>
 import api from "@/api";
 import { Bar, Pie } from "vue-chartjs";
+import Loader from "@/components/Loader.vue";
 import {
   Chart as ChartJS,
   Title,
@@ -120,7 +121,7 @@ ChartJS.register(
 );
 
 export default {
-  components: { Bar, Pie },
+  components: { Bar, Pie, Loader },
   data() {
     return {
       data: null,

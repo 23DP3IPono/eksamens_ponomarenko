@@ -44,4 +44,18 @@ class Celojums extends Model
     {
         return $this->hasMany(Izdevums::class, 'celojuma_id');
     }
+
+    // Users who favorited this trip
+public function favoritedBy()
+{
+    return $this->belongsToMany(
+        User::class,
+        'favorites',
+        'celojuma_id',
+        'user_id',
+        'celojuma_id',
+        'id'
+    )->withTimestamps();
+}
+
 }

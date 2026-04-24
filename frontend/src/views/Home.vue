@@ -47,10 +47,16 @@
     </section>
 
     <section class="section section--soft">
-      <h2 class="section__title">Populārākie ceļojumi</h2>
+      <h2 class="section__title">Tūvakie ceļojumi</h2>
 
-      <div v-if="loading" class="loading">Ielādē...</div>
-      <div v-else-if="error" class="error">Kļūda: {{ error }}</div>
+      <Loader v-if="loading" />
+      <div v-else-if="error" class="error">⚠️ Neizdevās ielādēt ceļojumus. Lūdzu, mēģini vēlreiz.</div>
+      <EmptyState
+        v-else-if="trips.length === 0"
+        icon="🗓️"
+        title="Pagaidām nav plānotu ceļojumu"
+        subtitle="Esi pirmais, kas izveido jaunu ceļojuma plānu!"
+      />
 
       <div v-else class="cards">
         <div class="card" v-for="t in trips" :key="t.celojuma_id">
@@ -100,17 +106,16 @@
       </v-btn>
     </section>
 
-    <footer class="footer">
-      © 2026 Ceļojumu plānotājs. Visas tiesības aizsargātas.
-    </footer>
-
   </v-container>
 </template>
 
 <script>
 import api from "@/api";
+import Loader from "@/components/Loader.vue";
+import EmptyState from "@/components/EmptyState.vue";
 
 export default {
+  components: { Loader, EmptyState },
   data() {
     return {
       trips: [],
@@ -118,11 +123,14 @@ export default {
       error: null,
     };
   },
-
   async mounted() {
     try {
-      // Only fetch the first 3 trips, sorted by latest start date
-      const data = await api.getTrips({ sort_by: "sakuma_datums", sort_dir: "desc" });
+      const today = new Date().toISOString().slice(0, 10);
+      const data = await api.getTrips({
+        date_from: today,
+        sort_by: "sakuma_datums",
+        sort_dir: "asc",
+      });
       this.trips = data.slice(0, 3);
     } catch (err) {
       this.error = err.message;
@@ -130,7 +138,6 @@ export default {
       this.loading = false;
     }
   },
-
   methods: {
     formatDate(d) {
       if (!d) return "";
