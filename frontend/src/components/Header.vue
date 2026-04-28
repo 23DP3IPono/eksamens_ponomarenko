@@ -1,4 +1,3 @@
-<!-- Header.vue -->
 <template>
   <header class="header">
     <div class="logo" @click="$router.push('/')">
@@ -41,7 +40,6 @@ export default {
       try {
         await api.logout();
       } catch (_) {
-        // Ignore errors — we clear local state anyway
       }
       this.auth.clearAuth();
       this.$router.push("/");

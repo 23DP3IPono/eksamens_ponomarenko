@@ -1,4 +1,3 @@
-<!-- Contact.vue -->
 <template>
   <v-container class="contact" fluid>
     <section class="contact__hero">

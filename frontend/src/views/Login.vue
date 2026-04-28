@@ -1,4 +1,3 @@
-<!-- Login.vue -->
 <template>
   <v-container class="auth" fluid>
     <div class="card">
@@ -57,8 +56,6 @@ export default {
     async submit() {
       this.errors = {};
       this.serverError = "";
-
-      // Client-side validation
       if (!this.email) this.errors.email = "E-pasts ir obligāts";
       else if (!/^\S+@\S+\.\S+$/.test(this.email))
         this.errors.email = "E-pasta formāts nav pareizs";

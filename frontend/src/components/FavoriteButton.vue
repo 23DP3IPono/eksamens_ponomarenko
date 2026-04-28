@@ -1,4 +1,3 @@
-<!-- FavoriteButton.vue -->
 <template>
   <button
     v-if="auth.isLoggedIn"

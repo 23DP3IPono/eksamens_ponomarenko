@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class IzdevumsController extends Controller
 {
-    /**
-     * POST /api/izdevumi
-     * Create an expense for a trip.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -34,10 +30,16 @@ class IzdevumsController extends Controller
 
         $data = $validator->validated();
 
-        // Ownership check — only the trip owner can add expenses to it
         $celojums = Celojums::find($data['celojuma_id']);
         if ($celojums->lietotajs_id !== $request->user()->id) {
             return response()->json(['message' => 'Nav tiesību pievienot izdevumu šim ceļojumam'], 403);
+        }
+        if ($data['datums'] < $celojums->sakuma_datums || $data['datums'] > $celojums->beigu_datums) {
+            return response()->json([
+                'errors' => [
+                    'datums' => ["Datumam jābūt no {$celojums->sakuma_datums} līdz {$celojums->beigu_datums}"],
+                ],
+            ], 422);
         }
 
         $izdevums = Izdevums::create($data);
@@ -45,9 +47,6 @@ class IzdevumsController extends Controller
         return response()->json($izdevums, 201);
     }
 
-    /**
-     * PUT /api/izdevumi/{id}
-     */
     public function update(Request $request, $id)
     {
         $izdevums = Izdevums::find($id);
@@ -55,7 +54,6 @@ class IzdevumsController extends Controller
             return response()->json(['message' => 'Izdevums nav atrasts'], 404);
         }
 
-        // Ownership check
         $celojums = Celojums::find($izdevums->celojuma_id);
         if (!$celojums || $celojums->lietotajs_id !== $request->user()->id) {
             return response()->json(['message' => 'Nav tiesību rediģēt šo izdevumu'], 403);
@@ -71,14 +69,22 @@ class IzdevumsController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $izdevums->update($validator->validated());
+        $data = $validator->validated();
+        if (isset($data['datums'])) {
+            if ($data['datums'] < $celojums->sakuma_datums || $data['datums'] > $celojums->beigu_datums) {
+                return response()->json([
+                    'errors' => [
+                        'datums' => ["Datumam jābūt no {$celojums->sakuma_datums} līdz {$celojums->beigu_datums}"],
+                    ],
+                ], 422);
+            }
+        }
+
+        $izdevums->update($data);
 
         return response()->json($izdevums);
     }
 
-    /**
-     * DELETE /api/izdevumi/{id}
-     */
     public function destroy(Request $request, $id)
     {
         $izdevums = Izdevums::find($id);

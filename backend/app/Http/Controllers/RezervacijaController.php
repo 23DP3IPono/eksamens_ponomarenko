@@ -13,13 +13,12 @@ class RezervacijaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'celojuma_id' => 'required|exists:celojums,celojuma_id',
-            'tips' => 'required|string|in:Aviobilete,Viesnīca,Cits',
+            'tips' => 'required|string|max:50',
             'pakalpojuma_nosaukums' => 'required|string|max:100',
             'cena' => 'required|numeric|min:0',
         ], [
             'celojuma_id.required' => 'Ceļojums ir obligāts',
             'tips.required' => 'Tips ir obligāts',
-            'tips.in' => 'Tipam jābūt vienam no: Aviobilete, Viesnīca, Cits',
             'pakalpojuma_nosaukums.required' => 'Pakalpojuma nosaukums ir obligāts',
             'cena.required' => 'Cena ir obligāta',
             'cena.min' => 'Cena nevar būt negatīva',
@@ -54,7 +53,7 @@ class RezervacijaController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'tips' => 'sometimes|required|string|in:Aviobilete,Viesnīca,Cits',
+            'tips' => 'sometimes|required|string|max:50',
             'pakalpojuma_nosaukums' => 'sometimes|required|string|max:100',
             'cena' => 'sometimes|required|numeric|min:0',
         ]);

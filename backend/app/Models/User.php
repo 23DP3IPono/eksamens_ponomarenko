@@ -28,14 +28,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    // A user has many trips
     public function celojumi()
     {
         return $this->hasMany(Celojums::class, 'lietotajs_id');
     }
-
-    // Favorited trips
 public function favoriteCelojumi()
 {
     return $this->belongsToMany(

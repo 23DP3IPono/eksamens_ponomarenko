@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    /**
-     * POST /api/register
-     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -51,9 +48,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /**
-     * POST /api/login
-     */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -81,18 +75,12 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/logout (requires auth)
-     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Atslēgts']);
     }
 
-    /**
-     * GET /api/me (requires auth)
-     */
     public function me(Request $request)
     {
         return response()->json($request->user());

@@ -17,7 +17,6 @@ return new class extends Migration
         $table->foreignId('celojuma_id')->constrained('celojums', 'celojuma_id')->onDelete('cascade');
         $table->timestamps();
 
-        // Prevent duplicate favorites
         $table->unique(['user_id', 'celojuma_id']);
     });
 }

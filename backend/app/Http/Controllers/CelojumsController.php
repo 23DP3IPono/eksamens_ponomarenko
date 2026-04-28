@@ -12,7 +12,6 @@ class CelojumsController extends Controller
     {
         $query = Celojums::with('lietotajs');
 
-        // "My trips only" filter — manually authenticate if Bearer token present
 if ($request->boolean('mine')) {
     $user = null;
     $token = $request->bearerToken();
@@ -25,12 +24,10 @@ if ($request->boolean('mine')) {
     if ($user) {
         $query->where('lietotajs_id', $user->id);
     } else {
-        // Asking for "mine" without being logged in → return empty
         return response()->json([]);
     }
 }
 
-        // Simple search — by nosaukums OR galamerkis
         if ($request->filled('search')) {
             $search = $request->query('search');
             $query->where(function ($q) use ($search) {
@@ -39,7 +36,6 @@ if ($request->boolean('mine')) {
             });
         }
 
-        // Advanced filter — budget range
         if ($request->filled('budget_min')) {
             $query->where('budzets', '>=', $request->query('budget_min'));
         }
@@ -47,7 +43,6 @@ if ($request->boolean('mine')) {
             $query->where('budzets', '<=', $request->query('budget_max'));
         }
 
-        // Advanced filter — date range
         if ($request->filled('date_from')) {
             $query->where('sakuma_datums', '>=', $request->query('date_from'));
         }
@@ -55,7 +50,6 @@ if ($request->boolean('mine')) {
             $query->where('beigu_datums', '<=', $request->query('date_to'));
         }
 
-        // Sorting
         $sortBy = $request->query('sort_by', 'celojuma_id');
         $sortDir = $request->query('sort_dir', 'asc');
         $allowedSort = ['celojuma_id', 'nosaukums', 'galamerkis', 'sakuma_datums', 'beigu_datums', 'budzets'];
@@ -92,13 +86,16 @@ if ($request->boolean('mine')) {
         $validator = Validator::make($request->all(), [
             'nosaukums' => 'required|string|max:100',
             'galamerkis' => 'required|string|max:100',
+            'valsts' => 'required|string|max:100',
             'sakuma_datums' => 'required|date|after_or_equal:today',
             'beigu_datums' => 'required|date|after_or_equal:sakuma_datums',
             'budzets' => 'required|numeric|min:0',
+            
         ], [
             'nosaukums.required' => 'Nosaukums ir obligāts',
             'nosaukums.max' => 'Nosaukums pārāk garš (max 100 simboli)',
             'galamerkis.required' => 'Galamērķis ir obligāts',
+            'valsts.required' => 'Valsts ir obligāts',
             'sakuma_datums.required' => 'Sākuma datums ir obligāts',
             'sakuma_datums.after_or_equal' => 'Sākuma datumam jābūt šodien vai vēlāk',
             'beigu_datums.required' => 'Beigu datums ir obligāts',
@@ -133,10 +130,12 @@ if ($request->boolean('mine')) {
         $validator = Validator::make($request->all(), [
             'nosaukums' => 'sometimes|required|string|max:100',
             'galamerkis' => 'sometimes|required|string|max:100',
+            'valsts' => 'sometimes|required|string|max:100',
             'sakuma_datums' => 'sometimes|required|date',
             'beigu_datums' => 'sometimes|required|date|after_or_equal:sakuma_datums',
             'budzets' => 'sometimes|required|numeric|min:0',
         ], [
+            'valsts.required' => 'Valsts ir obligāts',
             'beigu_datums.after_or_equal' => 'Beigu datumam jābūt pēc sākuma datuma',
             'budzets.min' => 'Budžets nevar būt negatīvs',
         ]);
@@ -166,9 +165,6 @@ if ($request->boolean('mine')) {
         return response()->json(['message' => 'Ceļojums dzēsts']);
     }
 
-    /**
-     * GET /api/celojumi/stats
-     */
     public function stats()
     {
         $totalTrips = Celojums::count();

@@ -34,6 +34,14 @@ class DienasPunktsController extends Controller
             return response()->json(['message' => 'Nav tiesību pievienot punktu šim ceļojumam'], 403);
         }
 
+        if ($data['datums'] < $celojums->sakuma_datums || $data['datums'] > $celojums->beigu_datums) {
+            return response()->json([
+                'errors' => [
+                    'datums' => ["Datumam jābūt no {$celojums->sakuma_datums} līdz {$celojums->beigu_datums}"],
+                ],
+            ], 422);
+        }
+
         $punkts = DienasPunkts::create($data);
         $punkts->load('vieta');
 
@@ -62,7 +70,19 @@ class DienasPunktsController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $punkts->update($validator->validated());
+        $data = $validator->validated();
+
+        if (isset($data['datums'])) {
+            if ($data['datums'] < $celojums->sakuma_datums || $data['datums'] > $celojums->beigu_datums) {
+                return response()->json([
+                    'errors' => [
+                        'datums' => ["Datumam jābūt no {$celojums->sakuma_datums} līdz {$celojums->beigu_datums}"],
+                    ],
+                ], 422);
+            }
+        }
+
+        $punkts->update($data);
         $punkts->load('vieta');
 
         return response()->json($punkts);

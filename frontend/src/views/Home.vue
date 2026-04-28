@@ -1,4 +1,3 @@
-<!-- Home.vue -->
 <template>
   <v-container fluid class="home">
 

@@ -1,4 +1,3 @@
-<!-- EmptyState.vue -->
 <template>
   <div class="empty-state">
     <div class="empty-state__icon">{{ icon }}</div>

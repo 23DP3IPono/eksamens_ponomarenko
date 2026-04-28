@@ -1,4 +1,3 @@
-<!-- TripForm.vue-->
 <template>
   <v-container class="form-page" fluid>
     <v-btn class="back-btn" @click="$router.back()">← Atpakaļ</v-btn>
@@ -19,9 +18,17 @@
           counter
         />
 
+        <v-autocomplete
+          v-model="form.valsts"
+          :items="countries"
+          label="Valsts"
+          variant="outlined"
+          :error-messages="errors.valsts"
+        />
+
         <v-text-field
           v-model="form.galamerkis"
-          label="Galamērķis"
+          label="Galamērķis (pilsēta vai reģions)"
           variant="outlined"
           :error-messages="errors.galamerkis"
           maxlength="100"
@@ -71,17 +78,20 @@
 <script>
 import api from "@/api";
 import { useAuthStore } from "@/stores/auth";
+import { COUNTRIES } from "@/data/countries";
 
 export default {
   data() {
     return {
       form: {
         nosaukums: "",
+        valsts: "",
         galamerkis: "",
         sakuma_datums: "",
         beigu_datums: "",
         budzets: null,
       },
+      countries: COUNTRIES,
       errors: {},
       serverError: "",
       loading: false,
@@ -94,25 +104,23 @@ export default {
     },
   },
   async mounted() {
-    // Redirect guests away — only registered users should see this page
     const auth = useAuthStore();
     if (!auth.isLoggedIn) {
       this.$router.push("/login");
       return;
     }
 
-    // If editing, load the existing trip data
     if (this.isEdit) {
       this.loading = true;
       try {
         const trip = await api.getTrip(this.$route.params.id);
-        // Check ownership on frontend too (backend will also enforce)
         if (trip.lietotajs_id !== auth.user.id) {
           alert("Nav tiesību rediģēt šo ceļojumu");
           this.$router.push("/services");
           return;
         }
         this.form.nosaukums = trip.nosaukums;
+        this.form.valsts = trip.valsts || "";
         this.form.galamerkis = trip.galamerkis;
         this.form.sakuma_datums = trip.sakuma_datums;
         this.form.beigu_datums = trip.beigu_datums;
@@ -132,12 +140,12 @@ export default {
       else if (this.form.nosaukums.length > 100)
         this.errors.nosaukums = "Nosaukums pārāk garš";
 
+      if (!this.form.valsts) this.errors.valsts = "Valsts ir obligāta";
       if (!this.form.galamerkis) this.errors.galamerkis = "Galamērķis ir obligāts";
 
       if (!this.form.sakuma_datums)
         this.errors.sakuma_datums = "Sākuma datums ir obligāts";
       else if (!this.isEdit) {
-        // For new trips, start date must be today or later
         const today = new Date().toISOString().slice(0, 10);
         if (this.form.sakuma_datums < today)
           this.errors.sakuma_datums = "Sākuma datumam jābūt šodien vai vēlāk";

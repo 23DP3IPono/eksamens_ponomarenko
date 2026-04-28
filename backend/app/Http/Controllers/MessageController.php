@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
-    /**
-     * POST /api/messages
-     * Save a contact form message.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -15,31 +15,32 @@ class Celojums extends Model
     protected $fillable = [
         'nosaukums',
         'galamerkis',
+        'valsts',
         'sakuma_datums',
         'beigu_datums',
         'budzets',
         'lietotajs_id',
     ];
 
-    // The user who created this trip
+    // User
     public function lietotajs()
     {
         return $this->belongsTo(User::class, 'lietotajs_id');
     }
 
-    // Day points of this trip
+    // Day points
     public function dienasPunkti()
     {
         return $this->hasMany(DienasPunkts::class, 'celojuma_id');
     }
 
-    // Reservations for this trip
+    // Reservations
     public function rezervacijas()
     {
         return $this->hasMany(Rezervacija::class, 'celojuma_id');
     }
 
-    // Expenses of this trip
+    // Expenses
     public function izdevumi()
     {
         return $this->hasMany(Izdevums::class, 'celojuma_id');

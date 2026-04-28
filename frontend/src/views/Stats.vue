@@ -1,4 +1,3 @@
-<!-- Stats.vue -->
 <template>
   <v-container class="stats" fluid>
     <section class="hero">

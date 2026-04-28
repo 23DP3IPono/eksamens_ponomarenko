@@ -1,4 +1,3 @@
-<!-- Register.vue -->
 <template>
   <v-container class="auth" fluid>
     <div class="card">
@@ -66,8 +65,6 @@ export default {
     async submit() {
       this.errors = {};
       this.serverError = "";
-
-      // Client-side validation
       if (!this.name) this.errors.name = "Vārds ir obligāts";
       if (!this.uzvards) this.errors.uzvards = "Uzvārds ir obligāts";
       if (!this.email) this.errors.email = "E-pasts ir obligāts";

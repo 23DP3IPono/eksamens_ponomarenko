@@ -76,11 +76,14 @@ export const api = {
     request(`/rezervacijas/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteReservation: (id) => request(`/rezervacijas/${id}`, { method: "DELETE" }),
 
-  // === Places (vietas) ===
+  // === Places ===
   getPlaces: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return request(`/vietas${qs ? "?" + qs : ""}`);
   },
+  getPlacesByCountry: (valsts) =>
+    request(`/vietas?valsts=${encodeURIComponent(valsts)}`),
+
   createPlace: (data) =>
     request(`/vietas`, { method: "POST", body: JSON.stringify(data) }),
 

@@ -15,11 +15,10 @@ class Vieta extends Model
     protected $fillable = [
         'nosaukums',
         'adrese',
+        'valsts',
         'koordinatas',
         'tips',
     ];
-
-    // Day points that happen at this place
     public function dienasPunkti()
     {
         return $this->hasMany(DienasPunkts::class, 'vieta_id');

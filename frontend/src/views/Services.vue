@@ -1,4 +1,3 @@
-<!-- Services.vue — Trips listing with search, filter, sort -->
 <template>
   <v-container class="services" fluid>
     <section class="hero">
@@ -8,7 +7,6 @@
       </div>
     </section>
 
-    <!-- Search and filter bar -->
     <section class="filters">
       <v-text-field
         v-model="search"
@@ -75,7 +73,6 @@
       </div>
     </section>
 
-    <!-- Results -->
     <Loader v-if="loading" text="Meklē ceļojumus..." />
     <div v-else-if="error" class="state error">
       ⚠️ Neizdevās ielādēt datus. Pārbaudi savienojumu un mēģini vēlreiz.

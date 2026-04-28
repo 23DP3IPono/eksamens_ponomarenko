@@ -1,4 +1,3 @@
-<!-- MyTrips.vue -->
 <template>
   <v-container class="my-trips" fluid>
     <section class="hero">
@@ -17,7 +16,6 @@
     </div>
 
     <template v-else>
-      <!-- Favorites section -->
       <section v-if="favorites.length > 0" class="fav-section">
         <h2 class="section-title">⭐ Iecienītie ceļojumi</h2>
         <div class="cards">
@@ -91,7 +89,6 @@
       </section>
     </template>
 
-    <!-- Delete confirmation dialog -->
     <v-dialog v-model="confirmDialog" max-width="420">
       <div class="dialog">
         <h3>Apstiprināt dzēšanu</h3>
@@ -170,7 +167,6 @@ export default {
       try {
         await api.deleteTrip(this.toDelete.celojuma_id);
         this.trips = this.trips.filter(t => t.celojuma_id !== this.toDelete.celojuma_id);
-        // Also remove from favorites if it was there
         this.favorites = this.favorites.filter(t => t.celojuma_id !== this.toDelete.celojuma_id);
       } catch (err) {
         alert("Kļūda dzēšot: " + err.message);

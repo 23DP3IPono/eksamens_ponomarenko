@@ -8,34 +8,33 @@ use Illuminate\Support\Facades\Validator;
 
 class VietaController extends Controller
 {
-    /**
-     * GET /api/vietas
-     * List all places with optional search.
-     */
     public function index(Request $request)
     {
         $query = Vieta::query();
 
+        if ($request->filled('valsts')) {
+            $query->where('valsts', $request->query('valsts'));
+        }
+
         if ($request->filled('search')) {
             $search = $request->query('search');
-            $query->where('nosaukums', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('nosaukums', 'like', "%{$search}%")
                   ->orWhere('adrese', 'like', "%{$search}%");
+            });
         }
 
         return response()->json($query->orderBy('nosaukums')->get());
     }
 
-    /**
-     * POST /api/vietas
-     * Create a new place.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'nosaukums' => 'required|string|max:100',
             'adrese' => 'nullable|string|max:150',
-            'koordinatas' => 'nullable|string|max:100',
+            'valsts' => 'nullable|string|max:100',
             'tips' => 'nullable|string|max:50',
+            'koordinatas' => 'nullable|string|max:100',
         ], [
             'nosaukums.required' => 'Nosaukums ir obligāts',
         ]);

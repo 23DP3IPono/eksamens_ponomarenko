@@ -7,10 +7,6 @@ use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    /**
-     * GET /api/favorites
-     * List the current user's favorite trips.
-     */
     public function index(Request $request)
     {
         $user = $request->user();
@@ -22,11 +18,6 @@ class FavoriteController extends Controller
 
         return response()->json($favorites);
     }
-
-    /**
-     * POST /api/favorites/{celojuma_id}
-     * Mark a trip as favorite.
-     */
     public function store(Request $request, $celojuma_id)
     {
         $celojums = Celojums::find($celojuma_id);
@@ -35,17 +26,11 @@ class FavoriteController extends Controller
         }
 
         $user = $request->user();
-
-        // syncWithoutDetaching adds the pivot row without removing others
         $user->favoriteCelojumi()->syncWithoutDetaching([$celojuma_id]);
 
         return response()->json(['message' => 'Pievienots iecienītajiem']);
     }
 
-    /**
-     * DELETE /api/favorites/{celojuma_id}
-     * Remove a trip from favorites.
-     */
     public function destroy(Request $request, $celojuma_id)
     {
         $user = $request->user();
@@ -54,11 +39,6 @@ class FavoriteController extends Controller
         return response()->json(['message' => 'Noņemts no iecienītajiem']);
     }
 
-    /**
-     * GET /api/favorites/check/{celojuma_id}
-     * Check if a specific trip is in the current user's favorites.
-     * Returns { favorited: true|false }
-     */
     public function check(Request $request, $celojuma_id)
     {
         $user = $request->user();
