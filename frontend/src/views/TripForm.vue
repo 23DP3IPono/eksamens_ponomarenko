@@ -259,8 +259,23 @@ export default {
   padding: 14px 30px;
 }
 @media (max-width: 700px) {
+  .form-page {
+    padding: 25px 15px;
+  }
+  .card {
+    padding: 25px 20px;
+  }
+  .card h1 {
+    font-size: 24px;
+  }
   .row {
     grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .submit, .cancel {
+    width: 100%;
   }
 }
 </style>

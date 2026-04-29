@@ -156,4 +156,13 @@ export default {
   margin-left: 5px;
   font-weight: 700;
 }
+
+@media (max-width: 700px) {
+  .card {
+    padding: 30px 22px;
+  }
+  .card h1 {
+    font-size: 26px;
+  }
+}
 </style>

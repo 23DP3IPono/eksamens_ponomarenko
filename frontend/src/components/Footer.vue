@@ -126,12 +126,16 @@ export default {};
     grid-template-columns: 1fr 1fr;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .footer__content {
     grid-template-columns: 1fr;
+    gap: 25px;
   }
   .footer {
-    padding: 40px 20px 15px;
+    padding: 30px 20px 15px;
+  }
+  .footer__section h3 {
+    font-size: 18px;
   }
 }
 </style>

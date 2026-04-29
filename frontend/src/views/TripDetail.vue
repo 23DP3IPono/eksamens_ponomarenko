@@ -1181,9 +1181,83 @@ export default {
   font-size: 13px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hero {
+    padding: 35px;
+  }
+  .hero h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 700px) {
+  .detail {
+    padding: 25px 15px;
+  }
   .summary {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .summary__card {
+    padding: 16px;
+  }
+  .summary__num {
+    font-size: 22px;
+  }
+  .summary__label {
+    font-size: 12px;
+  }
+  .hero {
+    padding: 25px;
+  }
+  .hero__top {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero__budget {
+    font-size: 18px;
+  }
+  .owner-actions {
+    flex-direction: column;
+  }
+  .owner-actions .btn {
+    width: 100%;
+  }
+  .block {
+    padding: 18px;
+  }
+  .block h2 {
+    font-size: 18px;
+  }
+  .block__header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .item {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .item__date {
+    min-width: auto;
+  }
+  .item__actions {
+    align-self: flex-end;
+  }
+  .table {
+    font-size: 13px;
+  }
+  .table th, .table td {
+    padding: 8px 6px;
+  }
+  .dialog {
+    padding: 20px;
   }
 }
 </style>

@@ -320,10 +320,37 @@ export default {
   font-size: 20px;
 }
 
-@media (max-width: 900px) {
-  .cards,
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filters__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .services {
+    padding: 25px 15px;
+  }
+  .hero {
+    padding: 40px 20px;
+  }
+  .hero h1 {
+    font-size: 32px;
+  }
+  .filters {
+    padding: 16px;
+  }
   .filters__row {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .reset-btn {
+    width: 100%;
   }
 }
 </style>

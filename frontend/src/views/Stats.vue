@@ -323,14 +323,47 @@ export default {
 
 @media (max-width: 1100px) {
   .summary {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   .charts,
   .tables {
     grid-template-columns: 1fr;
   }
-  .chart-block {
-    height: 360px;
+}
+
+@media (max-width: 700px) {
+  .stats {
+    padding: 25px 15px;
+  }
+  .hero {
+    padding: 30px 20px;
+  }
+  .hero h1 {
+    font-size: 28px;
+  }
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .summary__card {
+    padding: 18px;
+  }
+  .summary__num {
+    font-size: 20px;
+  }
+  .chart-block,
+  .table-block {
+    padding: 18px;
+  }
+  .chart-block h2,
+  .table-block h2 {
+    font-size: 17px;
+  }
+  .table {
+    font-size: 13px;
+  }
+  .table th, .table td {
+    padding: 8px 6px;
   }
 }
 </style>

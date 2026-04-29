@@ -322,9 +322,34 @@ export default {
   gap: 10px;
   justify-content: flex-end;
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .my-trips {
+    padding: 25px 15px;
+  }
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 25px;
+    text-align: left;
+  }
+  .hero h1 {
+    font-size: 28px;
+  }
+  .new-btn {
+    width: 100%;
+    text-align: center;
+  }
   .cards {
     grid-template-columns: 1fr;
+  }
+  .section-title {
+    font-size: 18px;
   }
 }
 </style>

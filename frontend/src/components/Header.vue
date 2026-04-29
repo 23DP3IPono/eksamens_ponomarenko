@@ -1,14 +1,20 @@
 <template>
   <header class="header">
-    <div class="logo" @click="$router.push('/')">
+    <div class="logo" @click="goHome">
       🌍 Ceļojumu plānotājs
     </div>
 
-    <nav class="nav">
+    <button class="burger" @click="menuOpen = !menuOpen" aria-label="Menu">
+      <span :class="{ open: menuOpen }"></span>
+      <span :class="{ open: menuOpen }"></span>
+      <span :class="{ open: menuOpen }"></span>
+    </button>
+
+    <nav class="nav" :class="{ 'nav--open': menuOpen }" @click="menuOpen = false">
       <router-link to="/">Sākums</router-link>
       <router-link to="/services">Ceļojumi</router-link>
-      <router-link to="/contact">Kontakti</router-link>
       <router-link to="/stats">Statistika</router-link>
+      <router-link to="/contact">Kontakti</router-link>
 
       <template v-if="!auth.isLoggedIn">
         <router-link to="/login">Pieslēgties</router-link>
@@ -30,17 +36,28 @@ import { useAuthStore } from "@/stores/auth";
 import api from "@/api";
 
 export default {
+  data() {
+    return { menuOpen: false };
+  },
   computed: {
     auth() {
       return useAuthStore();
     },
   },
+  watch: {
+    $route() {
+      this.menuOpen = false;
+    },
+  },
   methods: {
+    goHome() {
+      this.menuOpen = false;
+      this.$router.push("/");
+    },
     async logout() {
       try {
         await api.logout();
-      } catch (_) {
-      }
+      } catch (_) {}
       this.auth.clearAuth();
       this.$router.push("/");
     },
@@ -68,7 +85,6 @@ export default {
 
 .header:hover {
   background: rgba(15, 23, 42, 0.95);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .logo {
@@ -82,13 +98,13 @@ export default {
 
 .logo:hover {
   color: #f59e0b;
-  transform: scale(1.05);
 }
 
 .nav {
   display: flex;
-  gap: 25px;
+  gap: 22px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav a {
@@ -139,5 +155,80 @@ export default {
 .nav .user {
   color: #f59e0b;
   font-weight: 700;
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+.burger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+  transform-origin: center;
+}
+.burger span.open:nth-child(1) {
+  transform: translateY(9.5px) rotate(45deg);
+}
+.burger span.open:nth-child(2) {
+  opacity: 0;
+}
+.burger span.open:nth-child(3) {
+  transform: translateY(-9.5px) rotate(-45deg);
+}
+
+@media (max-width: 1100px) {
+  .header {
+    padding: 15px 25px;
+  }
+  .logo {
+    font-size: 18px;
+  }
+  .nav {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 700px) {
+  .header {
+    padding: 12px 18px;
+  }
+  .burger {
+    display: flex;
+  }
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(11, 15, 26, 0.97);
+    backdrop-filter: blur(12px);
+    padding: 20px;
+    gap: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateY(-130%);
+    transition: transform 0.3s ease;
+  }
+  .nav--open {
+    transform: translateY(0);
+  }
+  .nav a, .nav span {
+    text-align: center;
+  }
+  .nav a::after {
+    display: none;
+  }
 }
 </style>

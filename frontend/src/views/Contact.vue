@@ -231,4 +231,20 @@ export default {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 700px) {
+  .contact {
+    padding: 25px 15px;
+  }
+  .contact__hero {
+    padding: 35px 20px;
+  }
+  .contact__hero h1 {
+    font-size: 28px;
+  }
+  .contact__info,
+  .form-card {
+    padding: 22px !important;
+  }
+}
 </style>

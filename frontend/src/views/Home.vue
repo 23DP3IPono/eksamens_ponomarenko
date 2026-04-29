@@ -358,19 +358,52 @@ export default {
   color: #aaa;
 }
 
-@media (max-width: 900px) {
-  .cards,
+@media (max-width: 1100px) {
   .features,
+  .cards,
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+  .section {
+    padding: 60px 30px;
+  }
+}
+
+@media (max-width: 700px) {
+  .features,
+  .cards,
   .steps {
     grid-template-columns: 1fr;
   }
-
   .hero {
-    padding: 60px 30px;
+    padding: 50px 20px;
+    min-height: 70vh;
   }
-
   .hero__title {
-    font-size: 36px;
+    font-size: 32px;
+  }
+  .hero__subtitle {
+    font-size: 16px;
+  }
+  .hero__buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero__buttons .btn {
+    width: 100%;
+  }
+  .section {
+    padding: 50px 20px;
+  }
+  .section__title {
+    font-size: 26px;
+    margin-bottom: 30px;
+  }
+  .feature {
+    padding: 25px;
+  }
+  .card {
+    padding: 30px;
   }
 }
 </style>
