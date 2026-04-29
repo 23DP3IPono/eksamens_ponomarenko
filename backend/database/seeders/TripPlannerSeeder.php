@@ -16,6 +16,14 @@ class TripPlannerSeeder extends Seeder
     public function run(): void
     {
         // === USERS ===
+        User::create([
+            'name' => 'Admins',
+            'uzvards' => 'Sistēmas',
+            'email' => 'admin@celojumi.lv',
+            'password' => Hash::make('admin123'),
+            'loma' => 'Admins',
+        ]);
+
         $user1 = User::create([
             'name' => 'Jānis',
             'uzvards' => 'Bērziņš',
@@ -32,7 +40,7 @@ class TripPlannerSeeder extends Seeder
             'loma' => 'Registrets',
         ]);
 
-        // === PLACES (vietas) ===
+        // === PLACES ===
         $riga = Vieta::create([
             'nosaukums' => 'Vecrīga',
             'adrese' => 'Rātslaukums 1, Rīga',
@@ -68,7 +76,7 @@ class TripPlannerSeeder extends Seeder
             'tips' => 'Viesnīca',
         ]);
 
-        // === TRIPS (celojumi) ===
+        // === TRIPS ===
         $trip1 = Celojums::create([
             'nosaukums' => 'Nedēļa Latvijā',
             'galamerkis' => 'Latvija',
@@ -96,7 +104,7 @@ class TripPlannerSeeder extends Seeder
             'lietotajs_id' => $user2->id,
         ]);
 
-        // === DAY POINTS (dienas_punkti) ===
+        // === DAY POINTS ===
         DienasPunkts::create([
             'datums' => '2026-05-10',
             'apraksts' => 'Pastaiga pa Vecrīgu',
@@ -132,7 +140,7 @@ class TripPlannerSeeder extends Seeder
             'vieta_id' => $gauja->vieta_id,
         ]);
 
-        // === RESERVATIONS (rezervacijas) ===
+        // === RESERVATIONS ===
         Rezervacija::create([
             'tips' => 'Viesnīca',
             'pakalpojuma_nosaukums' => 'Hotel Latvia - 2 naktis',
@@ -154,7 +162,7 @@ class TripPlannerSeeder extends Seeder
             'celojuma_id' => $trip3->celojuma_id,
         ]);
 
-        // === EXPENSES (izdevumi) ===
+        // === EXPENSES ===
         Izdevums::create([
             'summa' => 45.50,
             'datums' => '2026-05-10',

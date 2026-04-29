@@ -102,6 +102,15 @@ export const api = {
   removeFavorite: (tripId) =>
     request(`/favorites/${tripId}`, { method: "DELETE" }),
 
+  // === Admin ===
+  adminStats: () => request(`/admin/stats`),
+  adminUsers: () => request(`/admin/users`),
+  adminDeleteUser: (id) => request(`/admin/users/${id}`, { method: "DELETE" }),
+  adminTrips: () => request(`/admin/trips`),
+  adminDeleteTrip: (id) => request(`/admin/trips/${id}`, { method: "DELETE" }),
+  adminMessages: () => request(`/admin/messages`),
+  adminDeleteMessage: (id) => request(`/admin/messages/${id}`, { method: "DELETE" }),
+
 };
 
 export default api;

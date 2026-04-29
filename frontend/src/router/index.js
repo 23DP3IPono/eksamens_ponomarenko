@@ -8,6 +8,7 @@ import MyTrips from "../views/MyTrips.vue";
 import Stats from "../views/Stats.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import Admin from "../views/Admin.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -20,15 +21,14 @@ const routes = [
   { path: "/contact", component: Contact },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
+  { path: "/admin", component: Admin },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    }
+    if (savedPosition) return savedPosition;
     return { top: 0 };
   },
 });

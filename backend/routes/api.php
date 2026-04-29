@@ -10,6 +10,7 @@ use App\Http\Controllers\VietaController;
 use App\Http\Controllers\DienasPunktsController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/services', [ServiceController::class, 'index']);
 
@@ -53,4 +54,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites/check/{celojuma_id}', [FavoriteController::class, 'check']);
     Route::post('/favorites/{celojuma_id}', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{celojuma_id}', [FavoriteController::class, 'destroy']);
+
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/stats', [AdminController::class, 'stats']);
+        Route::get('/users', [AdminController::class, 'users']);
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+        Route::get('/trips', [AdminController::class, 'trips']);
+        Route::delete('/trips/{id}', [AdminController::class, 'deleteTrip']);
+        Route::get('/messages', [AdminController::class, 'messages']);
+        Route::delete('/messages/{id}', [AdminController::class, 'deleteMessage']);
+    });
 });

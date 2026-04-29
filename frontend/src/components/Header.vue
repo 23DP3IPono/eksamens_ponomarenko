@@ -23,6 +23,7 @@
 
       <template v-else>
         <router-link to="/my-trips">Mani ceļojumi</router-link>
+        <router-link v-if="auth.isAdmin" to="/admin" class="admin-link">🛡 Admin</router-link>
         <router-link to="/services/new" class="register-link">+ Jauns</router-link>
         <span class="user">👤 {{ auth.fullName }}</span>
         <a href="#" @click.prevent="logout">Iziet</a>
@@ -105,6 +106,16 @@ export default {
   gap: 22px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.nav .admin-link {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white !important;
+  padding: 8px 14px !important;
+  border-radius: 999px;
+}
+.nav .admin-link::after {
+  display: none;
 }
 
 .nav a {
