@@ -12,6 +12,20 @@ import router from "./router";
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    defaultTheme: "dark",
+    themes: {
+      dark: {
+        dark: true,
+        colors: {
+          background: "#0a0e1a",
+          surface: "#0b0f1a",
+          primary: "#f59e0b",
+          secondary: "#8b5cf6",
+        },
+      },
+    },
+  },
 });
 
 const pinia = createPinia();

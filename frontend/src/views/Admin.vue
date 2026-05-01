@@ -49,80 +49,84 @@
     <section v-if="activeTab === 'users'" class="block">
       <Loader v-if="loadingUsers" />
       <div v-else-if="users.length === 0" class="empty">Nav lietotāju.</div>
-      <table v-else class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Vārds, Uzvārds</th>
-            <th>E-pasts</th>
-            <th>Loma</th>
-            <th>Ceļojumi</th>
-            <th style="width: 120px;">Darbības</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="u in users" :key="u.id">
-            <td>{{ u.id }}</td>
-            <td>{{ u.name }} {{ u.uzvards }}</td>
-            <td>{{ u.email }}</td>
-            <td>
-              <span :class="['badge', 'badge--' + u.loma.toLowerCase()]">
-                {{ u.loma }}
-              </span>
-            </td>
-            <td>{{ u.celojumi_count }}</td>
-            <td>
-              <v-btn
-                v-if="u.loma !== 'Admins'"
-                size="small"
-                class="btn--del"
-                @click="deleteUser(u)"
-              >
-                🗑 Dzēst
-              </v-btn>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Vārds, Uzvārds</th>
+              <th>E-pasts</th>
+              <th>Loma</th>
+              <th>Ceļojumi</th>
+              <th style="width: 120px;">Darbības</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="u in users" :key="u.id">
+              <td>{{ u.id }}</td>
+              <td>{{ u.name }} {{ u.uzvards }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                <span :class="['badge', 'badge--' + u.loma.toLowerCase()]">
+                  {{ u.loma }}
+                </span>
+              </td>
+              <td>{{ u.celojumi_count }}</td>
+              <td>
+                <v-btn
+                  v-if="u.loma !== 'Admins'"
+                  size="small"
+                  class="btn--del"
+                  @click="deleteUser(u)"
+                >
+                  🗑 Dzēst
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section v-if="activeTab === 'trips'" class="block">
       <Loader v-if="loadingTrips" />
       <div v-else-if="trips.length === 0" class="empty">Nav ceļojumu.</div>
-      <table v-else class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nosaukums</th>
-            <th>Galamērķis</th>
-            <th>Valsts</th>
-            <th>Īpašnieks</th>
-            <th>Datumi</th>
-            <th>Budžets</th>
-            <th style="width: 160px;">Darbības</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="t in trips" :key="t.celojuma_id">
-            <td>{{ t.celojuma_id }}</td>
-            <td>{{ t.nosaukums }}</td>
-            <td>{{ t.galamerkis }}</td>
-            <td>{{ t.valsts || "—" }}</td>
-            <td v-if="t.lietotajs">{{ t.lietotajs.name }} {{ t.lietotajs.uzvards }}</td>
-            <td v-else>—</td>
-            <td>{{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}</td>
-            <td>€ {{ t.budzets }}</td>
-            <td>
-              <v-btn size="small" class="btn--view" @click="$router.push('/services/' + t.celojuma_id)">
-                👁
-              </v-btn>
-              <v-btn size="small" class="btn--del" @click="deleteTrip(t)">
-                🗑
-              </v-btn>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nosaukums</th>
+              <th>Galamērķis</th>
+              <th>Valsts</th>
+              <th>Īpašnieks</th>
+              <th>Datumi</th>
+              <th>Budžets</th>
+              <th style="width: 160px;">Darbības</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="t in trips" :key="t.celojuma_id">
+              <td>{{ t.celojuma_id }}</td>
+              <td>{{ t.nosaukums }}</td>
+              <td>{{ t.galamerkis }}</td>
+              <td>{{ t.valsts || "—" }}</td>
+              <td v-if="t.lietotajs">{{ t.lietotajs.name }} {{ t.lietotajs.uzvards }}</td>
+              <td v-else>—</td>
+              <td>{{ formatDate(t.sakuma_datums) }} – {{ formatDate(t.beigu_datums) }}</td>
+              <td>€ {{ t.budzets }}</td>
+              <td>
+                <v-btn size="small" class="btn--view" @click="$router.push('/services/' + t.celojuma_id)">
+                  👁
+                </v-btn>
+                <v-btn size="small" class="btn--del" @click="deleteTrip(t)">
+                  🗑
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section v-if="activeTab === 'messages'" class="block">
@@ -435,6 +439,16 @@ export default {
 .msg__actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -10px;
+  padding: 0 10px;
+}
+.table-wrap .table {
+  min-width: 600px;
 }
 
 @media (max-width: 1100px) {
