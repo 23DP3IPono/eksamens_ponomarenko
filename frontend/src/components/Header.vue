@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="logo" @click="goHome">
-      🌍 Ceļojumu plānotājs
+      <AppLogo :size="40" :show-text="true" />
     </div>
 
     <button class="burger" @click="menuOpen = !menuOpen" aria-label="Menu">
@@ -35,8 +35,12 @@
 <script>
 import { useAuthStore } from "@/stores/auth";
 import api from "@/api";
+import AppLogo from "@/components/AppLogo.vue";
 
 export default {
+  components: {
+    AppLogo,
+  },
   data() {
     return { menuOpen: false };
   },
