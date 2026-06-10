@@ -1,27 +1,27 @@
-# 🌍 Ceļojumu plānotājs
+#  Ceļojumu plānotājs
  
 Tīmekļa lietotne ceļojumu plānošanai un budžeta uzskaitei.
  
-🔗 **Live demo:** [https://tripplanner.icu](https://tripplanner.icu)
+ **Live demo:** [https://tripplanner.icu](https://tripplanner.icu)
  
 ---
  
-## ✨ Galvenās funkcijas
+##  Galvenās funkcijas
  
-- 🔐 Lietotāju reģistrācija, autentifikācija ar Sanctum tokeniem un lomu sistēma (Viesis / Reģistrēts / Administrators)
-- 🌍 Ceļojumu izveide
-- 🗺️ Maršruta plānošana ar dienas punktiem un vietām
-- 🛏️ Rezervāciju un izdevumu uzskaite ar dažādiem tipiem
-- ⭐ Iecienīto ceļojumu sistēma
-- 🔍 Meklēšana, filtri (budžets, datumi) un kārtošana
-- 📊 Statistikas lapa ar grafikiem (Bar, Pie chart) un agregācijām
-- 📈 Budžeta progresa josla ar krāsu kodējumu
-- ✉️ Kontaktu forma ar ziņu saglabāšanu datu bāzē
-- 🛡️ Administratora panelis lietotāju, ceļojumu un ziņu pārvaldībai
-- 📱 Pielāgots dizains datoram, planšetēm un mobilajām ierīcēm
+-  Lietotāju reģistrācija, autentifikācija ar Sanctum tokeniem un lomu sistēma (Viesis / Reģistrēts / Administrators)
+-  Ceļojumu izveide
+-  Maršruta plānošana ar dienas punktiem un vietām
+-  Rezervāciju un izdevumu uzskaite ar dažādiem tipiem
+-  Iecienīto ceļojumu sistēma
+-  Meklēšana, filtri (budžets, datumi) un kārtošana
+-  Statistikas lapa ar grafikiem (Bar, Pie chart) un agregācijām
+-  Budžeta progresa josla ar krāsu kodējumu
+-  Kontaktu forma ar ziņu saglabāšanu datu bāzē
+-  Administratora panelis lietotāju, ceļojumu un ziņu pārvaldībai
+-  Pielāgots dizains datoram, planšetēm un mobilajām ierīcēm
 ---
  
-## 🛠 Tehnoloģijas
+##  Tehnoloģijas
  
 **Frontend:** Vue 3, Vuetify, Pinia, Vue Router, Chart.js, Vite  
 **Backend:** Laravel 11, Sanctum  
@@ -30,7 +30,7 @@ Tīmekļa lietotne ceļojumu plānošanai un budžeta uzskaitei.
  
 ---
  
-## 🗂️ Datu bāzes struktūra
+##  Datu bāzes struktūra
  
 8 tabulas:
  
@@ -46,35 +46,7 @@ Visas saites starp tabulām ir ar svešatslēgām un kaskādes dzēšanu, kur ta
  
 ---
  
-## 🚀 Vietējā uzstādīšana
- 
-### Priekšnosacījumi
-- PHP 8.4+, Composer
-- Node.js + npm
-- MySQL (caur Laragon, XAMPP vai citu)
-### Backend
-```bash
-cd backend
-composer install
-cp .env.example .env
-# .env: MySQL pieslēgšanās datus
-php artisan key:generate
-php artisan migrate --seed
-php artisan serve
-```
- 
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
- 
-Atver [http://localhost:5173](http://localhost:5173).
- 
----
- 
-## 👤 Pieejas dati testēšanai
+##  Pieejas dati testēšanai
  
 | Loma | E-pasts | Parole |
 |------|---------|--------|
@@ -83,7 +55,7 @@ Atver [http://localhost:5173](http://localhost:5173).
  
 ---
  
-## 📁 Projekta struktūra
+##  Projekta struktūra
  
 ```
 project/
@@ -103,6 +75,6 @@ project/
  
 ---
  
-## 👨‍🎓 Autors
+##  Autors
  
-I.Ponomarenko  
+Ivans Ponomarenko  
